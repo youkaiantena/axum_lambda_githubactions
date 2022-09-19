@@ -1,0 +1,18 @@
+[package]
+name = "container"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+# エラー処理を扱いやすくするらしい
+anyhow = "1.0.65"
+# tokioの人たちが作ったwebアプリケーションフレームワーク
+axum = "0.5.16"
+# シリアライズ・デシリアライズ用
+serde = { version = "1.0.144", features = ["derive"] }
+# jsonからstruct, structからjsonへ
+serde_json = "1.0.85"
+# 非同期ランタイム
+tokio = { version = "1.21.1", features = ["full"] }
