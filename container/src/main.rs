@@ -1,21 +1,18 @@
-use container::controllers::health_controller::{ping};
-use axum::{routing::get, Router};
+use container::index::app;
+use lambda_web::{is_running_on_lambda, run_hyper_on_lambda, LambdaError};
 use std::net::SocketAddr;
 
 #[tokio::main]
-async fn main() -> anyhow::Result<()> {
-    let health_router = Router::new()
-        .route("/ping", get(ping));
+async fn main() -> Result<(), LambdaError> {
+    let app = app().await;
 
-    let app = Router::new()
-        .nest("/health", health_router);
-
-    let addr = SocketAddr::from(([127, 0, 0, 1], 3000));
-
-    axum::Server::bind(&addr)
-        .serve(app.into_make_service())
-        .await
-        .unwrap();
+    if is_running_on_lambda() {
+        run_hyper_on_lambda(app).await?;
+    } else {
+        // Run app on local server
+        let addr = SocketAddr::from(([127, 0, 0, 1], 8080));
+        axum::Server::bind(&addr).serve(app.into_make_service()).await?;
+    }
 
     Ok(())
 }

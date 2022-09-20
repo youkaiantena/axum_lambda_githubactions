@@ -10,6 +10,8 @@ edition = "2021"
 anyhow = "1.0.65"
 # tokioの人たちが作ったwebアプリケーションフレームワーク
 axum = "0.5.16"
+# axumをaws lambdaで動かす
+lambda-web = { vesion = "0.2.0", features=["hyper"] }
 # シリアライズ・デシリアライズ用
 serde = { version = "1.0.144", features = ["derive"] }
 # jsonからstruct, structからjsonへ
