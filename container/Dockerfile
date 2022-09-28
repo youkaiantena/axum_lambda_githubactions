@@ -21,5 +21,5 @@ COPY src src
 RUN touch src/lib.rs && cargo build --release --target x86_64-unknown-linux-musl
 
 FROM public.ecr.aws/lambda/provided:al2
-COPY --from=build /tmp/target/x86_64-unknown-linux-musl/release  ${LAMBDA_RUNTIME_DIR}/bootstrap
+COPY --from=build /tmp/target/x86_64-unknown-linux-musl/release/container  ${LAMBDA_RUNTIME_DIR}/bootstrap
 CMD [ "lambda-handler" ]
