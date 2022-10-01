@@ -3,7 +3,7 @@ name: Build and Deploy container image to Amazon Lambda
 on:
   pull_request:
     branches:
-      - dev
+      - main
 
 env:
   AWS_REGION: ap-northeast-1
@@ -26,6 +26,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+
+      - name: Setup buildx action
+        uses: docker/setup-buildx-action@v2
+
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -42,15 +48,18 @@ jobs:
 
       - name: Build, tag, and push image to Amazon ECR
         id: build-image
+        uses: docker/build-push-action@v3
         env:
-          DOCKER_BUILDKIT: 1
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: practice
           IMAGE_TAG: ${{ github.sha }}
-        run: |
+        with:
           # Build a docker container and push image to Amazon ECR
-          docker build --cache-from="$ECR_REGISTRY/$ECR_REPOSITORY:latest" \
-                       -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG \
-                       ./container/
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-          echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
+          context: ./container/
+          platforms: linux/arm64
+          push: true
+          tags: ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          # cache-from: type=registry,ref=${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:buildcache
+          # cache-to: type=registry,ref=${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:buildcache,mode=max
