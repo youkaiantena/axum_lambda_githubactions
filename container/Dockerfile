@@ -1,6 +1,6 @@
 FROM rust:1.64-buster as build
 
-RUN apt update -y && apt install python3-pip -y && pip3 install cargo-zigbuild
+RUN apt update -y && apt install python3-pip -y && pip3 install cargo-zigbuild==0.14.0
 
 RUN rustup update && rustup target add aarch64-unknown-linux-musl
 
