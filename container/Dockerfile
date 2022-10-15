@@ -7,7 +7,6 @@ RUN rustup update && rustup target add aarch64-unknown-linux-musl
 WORKDIR /app
 ENV CARGO_TARGET_DIR=/tmp/target
 ENV PKG_CONFIG_ALLOW_CROSS=1
-COPY .cargo .cargo
 COPY Cargo.toml Cargo.toml
 COPY Cargo.lock Cargo.lock
 RUN mkdir -p src/
