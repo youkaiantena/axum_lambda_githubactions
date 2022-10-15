@@ -1,7 +1,8 @@
 FROM arm64v8/rust:1.64-slim-buster as build
 
 # RUN apt-get -y update && apt-get -y install libssl-dev pkg-config build-essential gcc-aarch64-linux-gnu
-RUN apt-get -y update && apt-get -y install libssl-dev pkg-config build-essential gcc-aarch64-linux-gnu
+# RUN apt-get -y update && apt-get -y install libssl-dev pkg-config build-essential gcc-aarch64-linux-gnu
+RUN apt-get -y update && apt-get -y install libssl-dev pkg-config build-essential
 
 RUN rustup update && rustup target add aarch64-unknown-linux-musl
 
