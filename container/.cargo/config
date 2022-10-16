@@ -3,4 +3,5 @@
 # rustflags = ["-C", "link-arg=-fuse-ld=mold"]
 
 [target.aarch64-unknown-linux-musl]
-linker = "gcc-aarch64-linux-gnu"
+linker = "clang"
+rustflags = ["-C", "link-arg=-fuse-ld=mold"]

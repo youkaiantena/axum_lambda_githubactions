@@ -1,8 +1,5 @@
 FROM arm64v8/rust:1.64-slim-bullseye as build
 
-RUN apt-get -y update && apt-get -y install libssl-dev pkg-config build-essential cmake g++ \
-    libssl-dev:arm64 gcc-aarch64-linux-gnu g++-aarch64-linux-gnu
-
 RUN rustup update && rustup target add aarch64-unknown-linux-musl
 
 WORKDIR /app
