@@ -1,6 +1,6 @@
 FROM rust:1.64-slim-bullseye as build
 
-RUN apt -y update && apt -y install musl-tools libssl-dev pkg-config build-essential clang
+RUN apt -y update && apt -y install musl-tools libssl-dev pkg-config build-essential lld clang
 
 RUN rustup update && rustup target add x86_64-unknown-linux-musl
 
