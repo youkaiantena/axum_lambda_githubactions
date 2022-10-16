@@ -59,8 +59,7 @@ jobs:
           # Build a docker container and push image to Amazon ECR
           docker build --cache-from="$ECR_REGISTRY/$ECR_REPOSITORY:latest" \
                       -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG \
-                      --platform=linux/arm64 \
-                      -f ./container/docker/arm64.Dockerfile \
+                      -f ./container/docker/x86_64.Dockerfile \
                       ./container/
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
