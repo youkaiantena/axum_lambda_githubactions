@@ -1,26 +1,5 @@
-FROM rust:1.64-bullseye as build
+FROM arm64v8/rust:1.64-slim-bullseye as build
 
-# RUN apt-get update && \
-#     TZ=Asia/Tokyo apt-get install -y tzdata && \
-#     apt-get install -y \
-#     build-essential \
-#     git \
-#     clang \
-#     lld \
-#     cmake \
-#     libxxhash-dev \
-#     zlib1g-dev \
-#     pkg-config && \
-#     apt-get install -y libstdc++-10-dev
-
-# RUN git clone https://github.com/rui314/mold.git && \
-#     mkdir mold/build && \
-#     cd mold/build && \
-#     git checkout v1.5.1 && \
-#     ../install-build-deps.sh && \
-#     cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=c++ .. && \
-#     cmake --build . -j $(nproc) && \
-#     sudo cmake --install .
 RUN apt-get -y update && apt-get -y install libssl-dev pkg-config build-essential gcc-aarch64-linux-gnu
 
 RUN rustup update && rustup target add aarch64-unknown-linux-musl
