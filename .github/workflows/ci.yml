@@ -32,9 +32,6 @@ jobs:
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
 
-      - name: Setup buildx action
-        uses: docker/setup-buildx-action@v2
-
       - name: Setup mold
         uses: rui314/setup-mold@v1
 
@@ -54,19 +51,16 @@ jobs:
 
       - name: Build, tag, and push image to Amazon ECR
         id: build-image
-        uses: docker/build-push-action@v3.1.1
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: practice
           IMAGE_TAG: ${{ github.sha }}
-        with:
+        run: |
           # Build a docker container and push image to Amazon ECR
-          context: ./container/
-          file: ./container/docker/arm64.Dockerfile
-          platforms: linux/arm64
-          push: true
-          tags: ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-          # cache-from: type=registry,ref=${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:buildcache
-          # cache-to: type=registry,ref=${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:buildcache,mode=max
+          docker build --cache-from="$ECR_REGISTRY/$ECR_REPOSITORY:latest" \
+                      -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG \
+                      --platform=linux/arm64 \
+                      -f ./container/docker/arm64.Dockerfile \
+                      ./container/
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
