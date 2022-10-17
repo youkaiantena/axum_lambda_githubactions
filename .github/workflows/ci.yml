@@ -62,7 +62,7 @@ jobs:
           # docker build --cache-from="$ECR_REGISTRY/$ECR_REPOSITORY:latest" \
           docker build \
                       -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG \
-                      --platform linux/arm64/v8 \
+                      --platform linux/arm64 \
                       -f ./container/docker/arm64.Dockerfile \
                       ./container/
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
