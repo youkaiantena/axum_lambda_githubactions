@@ -31,8 +31,8 @@ jobs:
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
-        with:
-          platforms: 'arm64,arm'
+        # with:
+        #   platforms: 'arm64,arm'
 
       - name: Setup buildx action
         uses: docker/setup-buildx-action@v2
@@ -64,8 +64,10 @@ jobs:
         with:
           # Build a docker container and push image to Amazon ECR
           context: ./container/
-          file: ./container/docker/arm64.Dockerfile
-          platforms: linux/arm64/v8
+          # file: ./container/docker/arm64.Dockerfile
+          file: ./container/docker/x86_64.Dockerfile
+          # platforms: linux/arm64/v8
+          platforms: linux/x86_64
           push: true
           tags: ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}
           cache-from: type=gha
