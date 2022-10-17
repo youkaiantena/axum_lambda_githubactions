@@ -10,6 +10,10 @@ on:
 
 env:
   AWS_REGION: ap-northeast-1
+  ECR_REPOSITORY: practice
+  ECR_REGISTRY: '' # step内で上書き
+  LAMBDA_FUNCTION_NAME: axum-lambda-github-actions
+  IMAGE_TAG: ${{ github.sha }}
 
 permissions:
   id-token: write
@@ -59,8 +63,6 @@ jobs:
         uses: docker/build-push-action@v3
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: practice
-          IMAGE_TAG: ${{ github.sha }}
         with:
           # Build a docker container and push image to Amazon ECR
           context: ./container/
@@ -74,17 +76,10 @@ jobs:
           cache-to: type=gha,mode=max
           # cache-from: type=registry,ref=${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:buildcache
           # cache-to: type=registry,ref=${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:buildcache,mode=max
-        # env:
-        #   ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        #   ECR_REPOSITORY: practice
-        #   IMAGE_TAG: ${{ github.sha }}
-        # run: |
-        #   # Build a docker container and push image to Amazon ECR
-        #   # docker build --cache-from="$ECR_REGISTRY/$ECR_REPOSITORY:latest" \
-        #   docker build \
-        #               -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG \
-        #               --platform linux/arm64 \
-        #               -f ./container/docker/arm64.Dockerfile \
-        #               ./container/
-        #   docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-        #   echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
+
+      - name: Lambda function update
+        id: lambda-function-update
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        run: |
+          aws lambda update-function-code --function-name $LAMBDA_FUNCTION_NAME --image-uri $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
