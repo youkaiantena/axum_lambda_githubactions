@@ -16,5 +16,5 @@ pub struct Pong {
 }
 
 pub async fn ping() -> impl IntoResponse {
-    (StatusCode::OK, axum::Json(Pong { message: String::from("pong") }))
+    (StatusCode::OK, axum::Json(Pong { message: String::from("pongpong") }))
 }
