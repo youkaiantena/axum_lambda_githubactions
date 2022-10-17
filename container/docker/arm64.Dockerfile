@@ -1,5 +1,7 @@
 FROM arm64v8/rust:1.64-slim-bullseye as build
 
+RUN apt -y update && apt -y install musl-tools libssl-dev pkg-config build-essential lld clang
+
 RUN rustup update && rustup target add aarch64-unknown-linux-musl
 
 WORKDIR /app
