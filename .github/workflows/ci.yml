@@ -31,6 +31,8 @@ jobs:
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
+        with:
+          platforms: 'arm64,arm'
 
       - name: Setup mold
         uses: rui314/setup-mold@v1
@@ -57,9 +59,10 @@ jobs:
           IMAGE_TAG: ${{ github.sha }}
         run: |
           # Build a docker container and push image to Amazon ECR
-          docker build --cache-from="$ECR_REGISTRY/$ECR_REPOSITORY:latest" \
+          # docker build --cache-from="$ECR_REGISTRY/$ECR_REPOSITORY:latest" \
+          docker build \
                       -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG \
-                      --platform=linux/arm64 \
+                      --platform linux/arm64/v8 \
                       -f ./container/docker/arm64.Dockerfile \
                       ./container/
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
