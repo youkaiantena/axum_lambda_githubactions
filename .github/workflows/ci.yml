@@ -64,10 +64,10 @@ jobs:
         with:
           # Build a docker container and push image to Amazon ECR
           context: ./container/
-          # file: ./container/docker/arm64.Dockerfile
-          file: ./container/docker/x86_64.Dockerfile
-          # platforms: linux/arm64/v8
-          platforms: linux/x86_64
+          file: ./container/docker/arm64.Dockerfile
+          # file: ./container/docker/x86_64.Dockerfile
+          platforms: linux/arm64/v8
+          # platforms: linux/x86_64
           push: true
           tags: ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}
           cache-from: type=gha
