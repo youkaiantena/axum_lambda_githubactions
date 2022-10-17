@@ -34,6 +34,9 @@ jobs:
         with:
           platforms: 'arm64,arm'
 
+      - name: Setup buildx action
+        uses: docker/setup-buildx-action@v2
+
       - name: Setup mold
         uses: rui314/setup-mold@v1
 
@@ -53,17 +56,33 @@ jobs:
 
       - name: Build, tag, and push image to Amazon ECR
         id: build-image
+        uses: docker/build-push-action@v3
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: practice
           IMAGE_TAG: ${{ github.sha }}
-        run: |
+        with:
           # Build a docker container and push image to Amazon ECR
-          # docker build --cache-from="$ECR_REGISTRY/$ECR_REPOSITORY:latest" \
-          docker build \
-                      -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG \
-                      --platform linux/arm64 \
-                      -f ./container/docker/arm64.Dockerfile \
-                      ./container/
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-          echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
+          context: ./container/
+          file: ./container/docker/arm64.Dockerfile
+          platforms: linux/arm64/v8
+          push: true
+          tags: ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          # cache-from: type=registry,ref=${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:buildcache
+          # cache-to: type=registry,ref=${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:buildcache,mode=max
+        # env:
+        #   ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        #   ECR_REPOSITORY: practice
+        #   IMAGE_TAG: ${{ github.sha }}
+        # run: |
+        #   # Build a docker container and push image to Amazon ECR
+        #   # docker build --cache-from="$ECR_REGISTRY/$ECR_REPOSITORY:latest" \
+        #   docker build \
+        #               -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG \
+        #               --platform linux/arm64 \
+        #               -f ./container/docker/arm64.Dockerfile \
+        #               ./container/
+        #   docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+        #   echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
